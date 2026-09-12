@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.15)
+project(crc32c_consumer LANGUAGES CXX)
+find_package(Crc32c CONFIG REQUIRED)
+add_executable(crc32c_consumer main.cpp)
+target_link_libraries(crc32c_consumer PRIVATE Crc32c::crc32c)

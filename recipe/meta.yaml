@@ -10,7 +10,7 @@ source:
   sha256: ac07840513072b7fcebda6e821068aa04889018f24e10e46181068fb214d7e56
 
 build:
-  number: 0
+  number: 1
   run_exports:
     - {{ pin_subpackage("libcrc32c", max_pin="x.x") }}
 
@@ -18,12 +18,18 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
     - cmake
     - ninja
   host:
   run:
 
 test:
+  requires:
+    - {{ compiler('cxx') }}  # [win and arm64]
+    - cmake                 # [win and arm64]
+  files:
+    - consumer              # [win and arm64]
   commands:
     - test -f $PREFIX/lib/libcrc32c${SHLIB_EXT}  # [unix]
     - test -f $PREFIX/include/crc32c/crc32c.h  # [unix]
@@ -31,6 +37,11 @@ test:
     - if not exist %PREFIX%\\Library\\bin\\crc32c.dll exit 1  # [win]
     - if not exist %PREFIX%\\Library\\lib\\crc32c.lib exit 1  # [win]
     - if not exist %PREFIX%\\Library\\include\\crc32c\\crc32c.h exit 1  # [win]
+    - cmake -S consumer -B consumer-build -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%"  # [win and arm64]
+    - cmake --build consumer-build  # [win and arm64]
+    - consumer-build\crc32c_consumer.exe  # [win and arm64]
+    - dumpbin /headers consumer-build\crc32c_consumer.exe | findstr /I /C:"AA64 machine (ARM64)"  # [win and arm64]
+    - dumpbin /headers %LIBRARY_BIN%\crc32c.dll | findstr /I /C:"AA64 machine (ARM64)"  # [win and arm64]
 
 about:
   home: https://github.com/google/crc32c

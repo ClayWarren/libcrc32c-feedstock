@@ -11,4 +11,4 @@ cxx_compiler:
 libcrc32c:
 - '1.1'
 target_platform:
-- win-64
+- win-arm64
