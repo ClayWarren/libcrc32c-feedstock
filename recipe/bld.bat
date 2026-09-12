@@ -1,4 +1,3 @@
-if "%target_platform%"=="win-arm64" set "CRC32C_CMAKE_ARGS=-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 mkdir build-shared
 if errorlevel 1 exit 1
 cd build-shared
@@ -6,7 +5,7 @@ if errorlevel 1 exit 1
 
 :: Configure and install based on other `bld.bat`s and
 ::https://github.com/google/crc32c/blob/master/.appveyor.yml
-cmake -G "Ninja" %CRC32C_CMAKE_ARGS% ^
+cmake -G "Ninja" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ^
          -DBUILD_TESTING=OFF ^
          -DBUILD_SHARED_LIBS=ON ^
          -DCMAKE_BUILD_TYPE=Release ^
